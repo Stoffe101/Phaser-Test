@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CodeQuest",
+  title: "DevGuild",
   description: "A programming learning platform with Phaser minigames",
 };
 

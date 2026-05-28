@@ -13,8 +13,31 @@ export default class LandingScene extends Phaser.Scene {
   }
 
   create() {
-    const centerX = this.scale.width / 2;
-    const centerY = this.scale.height / 2;
+  const centerX = this.scale.width / 2;
+  const centerY = this.scale.height / 2;
+
+  const logo = this.add.sprite(centerX, centerY, "logo");
+
+  logo.setOrigin(0.5);
+  logo.setScale(0.5);
+
+  // Gör loggan klickbar
+  logo.setInteractive({ cursor: "pointer" });
+
+  // När man klickar
+  logo.on("pointerdown", () => {
+    window.location.href = "/login";
+  });
+
+  // Hover-effekt
+  logo.on("pointerover", () => {
+    logo.setScale(0.51);
+  });
+
+  logo.on("pointerout", () => {
+    logo.setScale(0.5);
+  });
+
 
     this.logo = this.add.sprite(centerX, centerY, "logo");
     this.logo.setOrigin(0.5);
@@ -27,15 +50,6 @@ export default class LandingScene extends Phaser.Scene {
     });
 
     this.titleText.setOrigin(0.5);
-
-    this.tweens.add({
-      targets: this.logo,
-      y: centerY - 20,
-      duration: 1200,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
 
     this.scale.on("resize", this.handleResize, this);
   }
