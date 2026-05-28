@@ -19,5 +19,8 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest"
+  },
+  "allowScripts": {
+    "sharp@0.34.5": true
   }
 }

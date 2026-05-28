@@ -1,32 +1,39 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Phaser from "phaser";
-import LandingScene from "@/game/scenes/LandingScene";
 
 export default function LandingPhaser() {
   const gameContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!gameContainerRef.current) return;
+    let game: any = null;
 
-    const config: Phaser.Types.Core.GameConfig = {
-      type: Phaser.AUTO,
-      parent: gameContainerRef.current,
-      width: window.innerWidth,
-      height: window.innerHeight,
-      backgroundColor: "#111827",
-      scene: [LandingScene],
-      scale: {
-        mode: Phaser.Scale.RESIZE,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-      },
-    };
+    async function startGame() {
+      if (!gameContainerRef.current) return;
 
-    const game = new Phaser.Game(config);
+      const Phaser = (await import("phaser")).default;
+      const LandingScene = (await import("@/game/scenes/LandingScene")).default;
+
+      const config = {
+        type: Phaser.AUTO,
+        parent: gameContainerRef.current,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        backgroundColor: "#111827",
+        scene: [LandingScene],
+        scale: {
+          mode: Phaser.Scale.RESIZE,
+          autoCenter: Phaser.Scale.CENTER_BOTH,
+        },
+      };
+
+      game = new Phaser.Game(config);
+    }
+
+    startGame();
 
     return () => {
-      game.destroy(true);
+      game?.destroy(true);
     };
   }, []);
 
