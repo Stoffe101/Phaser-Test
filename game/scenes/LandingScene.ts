@@ -13,35 +13,26 @@ export default class LandingScene extends Phaser.Scene {
   }
 
   create() {
-  const centerX = this.scale.width / 2;
-  const centerY = this.scale.height / 2;
-
-  const logo = this.add.sprite(centerX, centerY, "logo");
-
-  logo.setOrigin(0.5);
-  logo.setScale(0.5);
-
-  // Gör loggan klickbar
-  logo.setInteractive({ cursor: "pointer" });
-
-  // När man klickar
-  logo.on("pointerdown", () => {
-    window.location.href = "/login";
-  });
-
-  // Hover-effekt
-  logo.on("pointerover", () => {
-    logo.setScale(0.51);
-  });
-
-  logo.on("pointerout", () => {
-    logo.setScale(0.5);
-  });
-
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
 
     this.logo = this.add.sprite(centerX, centerY, "logo");
     this.logo.setOrigin(0.5);
     this.logo.setScale(0.5);
+    this.logo.setInteractive({ cursor: "pointer" });
+    this.logo.on("pointerdown", () => {
+      window.dispatchEvent(
+        new CustomEvent("phaser:navigate", {
+          detail: { path: "/login" },
+        }),
+      );
+    });
+    this.logo.on("pointerover", () => {
+      this.logo?.setScale(0.51);
+    });
+    this.logo.on("pointerout", () => {
+      this.logo?.setScale(0.5);
+    });
 
     this.titleText = this.add.text(centerX, centerY + 150, "DevGuild", {
       fontSize: "40px",
@@ -52,6 +43,9 @@ export default class LandingScene extends Phaser.Scene {
     this.titleText.setOrigin(0.5);
 
     this.scale.on("resize", this.handleResize, this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scale.off("resize", this.handleResize, this);
+    });
   }
 
   private handleResize(gameSize: Phaser.Structs.Size) {
