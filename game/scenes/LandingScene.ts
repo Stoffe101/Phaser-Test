@@ -3,6 +3,7 @@ import Phaser from "phaser";
 export default class LandingScene extends Phaser.Scene {
   private logo?: Phaser.GameObjects.Sprite;
   private titleText?: Phaser.GameObjects.Text;
+  private logoBaseScale = 0.5;
 
   constructor() {
     super("LandingScene");
@@ -18,7 +19,7 @@ export default class LandingScene extends Phaser.Scene {
 
     this.logo = this.add.sprite(centerX, centerY, "logo");
     this.logo.setOrigin(0.5);
-    this.logo.setScale(0.5);
+    this.logo.setScale(this.logoBaseScale);
     this.logo.setInteractive({ cursor: "pointer" });
     this.logo.on("pointerdown", () => {
       window.dispatchEvent(
@@ -28,10 +29,10 @@ export default class LandingScene extends Phaser.Scene {
       );
     });
     this.logo.on("pointerover", () => {
-      this.logo?.setScale(0.51);
+      this.logo?.setScale(this.logoBaseScale * 1.02);
     });
     this.logo.on("pointerout", () => {
-      this.logo?.setScale(0.5);
+      this.logo?.setScale(this.logoBaseScale);
     });
 
     this.titleText = this.add.text(centerX, centerY + 150, "DevGuild", {
@@ -41,6 +42,7 @@ export default class LandingScene extends Phaser.Scene {
     });
 
     this.titleText.setOrigin(0.5);
+    this.updateLayout(this.scale.width, this.scale.height);
 
     this.scale.on("resize", this.handleResize, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -49,10 +51,28 @@ export default class LandingScene extends Phaser.Scene {
   }
 
   private handleResize(gameSize: Phaser.Structs.Size) {
-    const centerX = gameSize.width / 2;
-    const centerY = gameSize.height / 2;
+    this.updateLayout(gameSize.width, gameSize.height);
+  }
 
-    this.logo?.setPosition(centerX, centerY);
-    this.titleText?.setPosition(centerX, centerY + 150);
+  private updateLayout(width: number, height: number) {
+    const centerX = width / 2;
+    const logoY = Phaser.Math.Clamp(height * 0.38, 100, height * 0.5);
+
+    this.logoBaseScale = Phaser.Math.Clamp(
+      Math.min(width / 1200, height / 900) * 0.5,
+      0.22,
+      0.5,
+    );
+
+    this.logo?.setPosition(centerX, logoY);
+    this.logo?.setScale(this.logoBaseScale);
+
+    const titleFontSize = Phaser.Math.Clamp(Math.round(width * 0.075), 24, 40);
+    this.titleText?.setFontSize(titleFontSize);
+
+    const logoBottomY = logoY + (this.logo?.displayHeight ?? 0) / 2;
+    const titleY = Phaser.Math.Clamp(logoBottomY + 42, 40, height - 24);
+
+    this.titleText?.setPosition(centerX, titleY);
   }
 }
